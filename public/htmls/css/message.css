@@ -1,0 +1,119 @@
+@charset "utf-8";
+/* CSS Document */
+
+body { margin:0; padding:0;  font-family:"Microsoft YaHei"; font-size:14px; color:#333; background:#f1f1f1; overflow-x:hidden;}
+
+.clear{ clear:both;}
+.clearfix:after{ content:"."; display:block; clear:both; font-size:0; height:0; overflow:hidden;}
+.clearfix{zoom:1;}
+
+
+.left{ float:left;}
+.right{ float:right;}
+ul{  -webkit-padding-start: 0px;}
+li{ list-style-type:none; }
+a{ text-decoration:none;}
+
+select {
+  /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+  border-right: solid 1px #ccc;
+
+  /*很关键：将默认的select选择框样式清除*/
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+
+  /*在选择框的最右侧中间显示小箭头图片*/
+  background: url("http://ourjs.github.io/static/2015/arrow.png") no-repeat scroll right center transparent;
+
+
+  /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+  padding-right: 14px;
+}
+
+
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select:-ms-expand { display: none; }
+selecr:focus{ border:1px solid #ffffff;}
+
+/*input*/
+input {outline:none;}
+
+
+
+/*head*/
+header{ width:100%; height:88px; background:#36b0f3;}
+header span{ width:60%; display:block; color:#fff; font-size:2.1em; margin:0 auto; text-align:center; line-height:88px;}
+#return{ width:24px; height:44px;margin:21px 30px; line-height:88px; float:left; background:url(../img/rt.png)no-repeat;}
+.touch{ width:45px; height:45px; background:url(../img/contact.png) no-repeat; padding-right:30px; margin-top:22px;}
+
+/*.message_title*/
+.message_title{ width:90%; line-height:48px; padding-left:10px; margin:0; color:#36b0f3; font-size:18px;}
+.message_title b{ display:inline-block; width:4px; height:24px; background:#36b0f3; margin:12px 8px;}
+
+.m1{ width:100%; line-height:48px; margin:0; background:#fff;}
+.m1 span{ display:inline-block; width:30%; line-height:48px; padding:0 16px;}
+.m1 a{ width:60%; line-height:48px; color:#36b0f3;}
+
+.message_title1{ width:90%; line-height:48px; padding-left:10px; margin:0; color:#36b0f3; font-size:18px; background:#f1f1f1;}
+.message_title1 b{ display:inline-block; width:4px; height:24px; background:#36b0f3; margin:12px 8px;}
+/*.message2{ background:#fff;}*/
+.m2{ width:100%; line-height:48px; border-bottom:1px solid #ccc;margin:0; background:#fff;}
+.m2 label{ display:inline-block; width:30%; line-height:48px; padding:0 16px;}
+.m2 input{ width:50%; line-height:24px;  font-family:"Microsoft YaHei";border:none;font-size: 14px;}
+.m2 img{width: 29%; margin: 4px 0 4px 35%;border: 1px solid #ccc;}
+.message2 select{ border:none; line-height:48px; width:50%;}
+
+.m3 {background: white}
+.m3 label{ display:inline-block; width:30%; line-height:48px; padding:0 16px;}
+.m3 textarea{width:50%; height:60px; border-radius:10px; margin:16px 0; font-family:"Microsoft YaHei";font-size: 14px}
+
+
+.message_button{ width:50%; line-height:36px; background:#36b0f3; margin:10% 24%; text-align:center; border-radius:10px;}
+.btn{ width:50%; line-height:40px; background:#36b0f3; border:none; text-align:center; border-radius:10px; font-family:"Microsoft YaHei"; font-size:16px;  color:#fff; }
+
+
+.submit{ display:none;}
+/*.c_bg*/
+.c_bg{ position:fixed; width:100%; height:100%; background:#000; opacity:0.2; z-index:899;}
+
+/*.contact3*/
+.contact3{ position:fixed; width:70%; line-height:36px; margin:30% 10%; padding:0 20px 10px 20px; background:#fff; border:1px solid #ccc;z-index:999;}
+.contact3 p{ margin:0; font-size:18px; text-align:center; padding:50px 0 30px 40px;}
+.contact3 p span{ width:37px; height:36px; background:url(../img/success.png) no-repeat; position:absolute; left:26%;}
+
+.contact3 span{ display:inline-block; color:#36b0f3; font-size:18px; padding:10px 0 0 0;}
+.close{ position:absolute; right:-50px; top:10px; width:100px; height:32px; background:url(../img/close.png) no-repeat;}
+
+
+/*a  upload */
+.a-upload {
+    padding: 4px 10px;
+    height: 20px;
+    line-height: 20px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.a-upload  input {
+    position: absolute;
+    width: 100%;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer
+}
+
+.a-upload:hover {
+    color: #444;
+    background: #eee;
+    border-color: #ccc;
+    text-decoration: none
+}
