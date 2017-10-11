@@ -5,8 +5,8 @@ var user = require("../models/user");
 var utils = require('../utils/utils');
 
 var rspHead = {
-    code : 1,
-    msg : "successfully"
+    rspCode : 1,
+    rspMsg : "successfully"
 }
 
 var rsp = {};

@@ -26,8 +26,9 @@ router.post('/registerUser', function(req, res) {
   console.log(req.body);
   var userName = req.body.userName;
   var pwd = req.body.password;
-  users.createUser(userName, pwd, "");
-  res.send("注册成功");
+  users.register(userName, pwd, "", "", function(err, result) {
+    
+  });
 });
 
 router.post('/test', function(req, res) {
