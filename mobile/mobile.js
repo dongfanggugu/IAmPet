@@ -4,9 +4,14 @@ var section = require("../models/section");
 var user = require("../models/user");
 var utils = require('../utils/utils');
 
-var rspHead = {
+var sucHead = {
     rspCode : 1,
     rspMsg : "successfully"
+}
+
+var failHead = {
+    rspCode : -1,
+    rspMsg : "error"
 }
 
 var rsp = {};
@@ -16,14 +21,15 @@ var rsp = {};
  */
 router.post('/register', function(req, res) {
     var body = req.body.body;
-    user.register(body.userName, body.password, null, null, function(err, result) {
+    var date = utils.nowDate();
+    user.register(body.userName, body.password, date, function(err, result) {
         var rsp = {};
         if (err) {
-            rspHead.rspCode = -1;
-            rspHead.rspMsg = "用户名已经存在";
-            rsp["head"] = rspHead;
+            failHead.rspCode = -1;
+            failHead.rspMsg = "用户名已经存在";
+            rsp["head"] = failHead;
         } else {
-            rsp["head"] = rspHead;
+            rsp["head"] = sucHead;
             rsp["body"] = utils.delJsonNull(result);
         }
         res.send(rsp);

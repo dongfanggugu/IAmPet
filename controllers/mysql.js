@@ -54,7 +54,7 @@ exports.queryUsersById = queryUsersById;
 /**
  * 插入用户
  */
-exports.addUser = function (id, userName, password, category, variety, callback) {
+exports.addUser = function (id, userName, password, date, callback) {
 
     //先确认用户是否存在
     queryUsersByName(userName, function (err, result) {
@@ -70,8 +70,7 @@ exports.addUser = function (id, userName, password, category, variety, callback)
             id: id,
             userName : userName,
             password : password,
-            category : category,
-            variety : variety
+            createTime : date
         };
         client.query(
             "insert into user set ?",

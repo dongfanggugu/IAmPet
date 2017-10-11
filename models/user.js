@@ -5,9 +5,9 @@ var errorCode = require('../utils/error_code');
 /**
  * 用户注册
  */
-exports.register = function (user, password, category, variety, callback) {
+exports.register = function (user, password, date, callback) {
     var userId = utils.uuid();
-    mysql.addUser(userId, user, password, category, variety, callback);
+    mysql.addUser(userId, user, password, date, callback);
 }
 
 /**
