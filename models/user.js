@@ -5,9 +5,29 @@ var errorCode = require('../utils/error_code');
 /**
  * 用户注册
  */
-exports.register = function (user, password, date, callback) {
+exports.register = function (user, password, callback) {
     var userId = utils.uuid();
-    mysql.addUser(userId, user, password, date, callback);
+    var date = utils.nowDate();
+    //用户是否已经存在
+    mysql.queryUsersByName(user, function(err, result) {
+        if (err) {
+            errorCode.error0002.msg = err;
+            callback(errorCode.error0002, null);
+        } else {
+            if (result.length > 0) {
+                callback(errorCode.error0003, null);
+            } else {
+                mysql.addUser(userId, user, password, date, function(err, result) {
+                    if (err) {
+                        errorCode.error0002.msg = err;
+                        callback(errorCode.error0002, null);
+                    } else {
+                        callback(null, result);
+                    }
+                });
+            }
+        }
+    });
 }
 
 /**
@@ -15,32 +35,54 @@ exports.register = function (user, password, date, callback) {
  */
 exports.login = function (userName, password, callback) {
     mysql.queryUsersByName(userName, function (err, result) {
-        console.log('user name: ' + userName);
-        console.log('password: ' + password);
         if (err) {
-            callback(errorCode.error6002, null);
+            errorCode.error0002.msg = err;
+            callback(errorCode.error0002, null);
         } else {
             if (0 == result.length) {       //没有用户
-                callback(errorCode.error1001, null);
-
+                callback(errorCode.error0004, null);
             } else if (result.length > 1) {     //用户数大于1
-                callback(errorCode.error6001, null);
-
+                callback(errorCode.error0006, null);
             } else if (1 == result.length) {
                 var userInfo = result[0];
                 var pwd = userInfo.password;
                 if (pwd != password) {  //密码错误
-                    callback(errorCode.error1002, null);
+                    callback(errorCode.error0005, null);
                 } else {
-                    var token = utils.uuid();
-                    mysql.addToken(userInfo.id, token, function (err, result) {
+                    //获取当前用户的是否已经登录
+                    mysql.tokenByUser(userInfo.id, function(err, result) {
                         if (err) {
-                            callback(errorCode.error6003, null);
+                            errorCode.error0002.msg = err;
+                            callback(errorCode.error0002, null);
                         } else {
-                            userInfo["token"] = token;
-                            callback(null, userInfo);
+                            var token = utils.uuid();
+                            if (result.length > 1) {
+                                //返回错误
+                                callback(errorCode.error0006, null);
+                            } else if (1 == result.length) {
+                                //更新用户token
+                                mysql.updateUserToken(userInfo.userId, token, function (err, result) {
+                                    if (err) {
+                                        errorCode.error0002.msg = err;
+                                        callback(errorCode.error0002, null);
+                                    } else {
+                                        userInfo["token"] = token;
+                                        callback(null, userInfo);
+                                    }
+                                });
+                            } else if (0 == result.length) {
+                                mysql.addToken(userInfo.id, token, function (err, result) {
+                                    if (err) {
+                                        errorCode.error0002.msg = err;
+                                        callback(errorCode.error0002, null);
+                                    } else {
+                                        userInfo["token"] = token;
+                                        callback(null, userInfo);
+                                    }
+                                });
+                            }
                         }
-                    });
+                    })
                 }
             }
         }
@@ -50,12 +92,24 @@ exports.login = function (userName, password, callback) {
 /**
  * 用户注销登录
  */
-exports.logout = function (user, callback) {
-    mysql.delToken(user, function (err, result) {
+exports.logout = function (user, token, callback) {
+    mysql.getUserByIdAndToken(user, token, function(err, result) {
         if (err) {
-            callback(errorCode.error6004, null);
+            errorCode.error0002.msg = err;
+            callback(err, null);
         } else {
-            callback(null, result);
+            if (0 == result.length) {   //用户已经注销
+                callback(errorCode.error0009, null);
+            } else {
+                mysql.delToken(user, function (err, result) {
+                    if (err) {
+                        errorCode.error0002.msg = err;
+                        callback(err, null);
+                    } else {
+                        callback(null, result);
+                    }
+                });
+            }
         }
-    });
+    })
 }

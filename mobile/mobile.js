@@ -3,34 +3,31 @@ var router = express.Router();
 var section = require("../models/section");
 var user = require("../models/user");
 var utils = require('../utils/utils');
+var multiparty = require('multiparty');
+var path = require('path');
+var fs = require("fs");
+let multer = require('multer');
 
-var sucHead = {
-    rspCode : 1,
-    rspMsg : "successfully"
+let uploadSingle = multer({
+    dest: 'public/media/images'
+});
+
+var rspHead = {
+    code : 1,
+    msg : "successfully"
 }
-
-var failHead = {
-    rspCode : -1,
-    rspMsg : "error"
-}
-
-var rsp = {};
 
 /**
  * 用户注册
  */
 router.post('/register', function(req, res) {
     var body = req.body.body;
-    var date = utils.nowDate();
-    user.register(body.userName, body.password, date, function(err, result) {
+    user.register(body.userName, body.password, function(err, result) {
         var rsp = {};
         if (err) {
-            failHead.rspCode = -1;
-            failHead.rspMsg = "用户名已经存在";
-            rsp["head"] = failHead;
+            rsp["head"] = err;
         } else {
-            rsp["head"] = sucHead;
-            rsp["body"] = utils.delJsonNull(result);
+            rsp["head"] = rspHead;
         }
         res.send(rsp);
     })
@@ -41,7 +38,9 @@ router.post('/register', function(req, res) {
  */
 router.post('/login', function (req, res) {
     var body = req.body.body;
+    console.log(body);
     user.login(body.userName, body.password, function (err, result) {
+        var rsp = {};
         if (err) {
             rsp["head"] = err;
         } else {
@@ -56,15 +55,17 @@ router.post('/login', function (req, res) {
  * 用户注销登录
  */
 router.post('/logout', function (req, res) {
+    var head = req.body.head;
     var body = req.body.body;
-    var userId = body.userId;
-    user.logout(userId, function (err, result) {
+    var token = head.token;
+    var userId = head.userId;
+    user.logout(userId, token, function (err, result) {
+        var rsp = {};
         if (err) {
             rsp["head"] = err;
         } else {
             rsp["head"] = rspHead;
         }
-
         res.send(rsp);
     }); 
 });
@@ -78,6 +79,28 @@ router.get('/getSections', function (req, res) {
         }
     });
 
+});
+
+/**
+ * 图片上传
+ */
+router.post('/image_upload', uploadSingle.single('logo'), function (req, res, next) {
+    var file = req.file;
+    console.log();
+    var fileInfo = {};
+
+    // 获取文件信息
+    fileInfo.mimetype = file.mimetype;
+    fileInfo.originalname = file.originalname;
+    fileInfo.size = file.size;
+    fileInfo.path = file.path;
+
+    // 设置响应类型及编码
+    res.set({
+        'content-type': 'application/json; charset=utf-8'
+    });
+
+    res.send(JSON.stringify(fileInfo));
 });
 
 /**

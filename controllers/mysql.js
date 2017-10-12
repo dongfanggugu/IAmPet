@@ -55,17 +55,6 @@ exports.queryUsersById = queryUsersById;
  * 插入用户
  */
 exports.addUser = function (id, userName, password, date, callback) {
-
-    //先确认用户是否存在
-    queryUsersByName(userName, function (err, result) {
-        if (err) {
-            callback(err, null);
-        } else {
-            if (result.length > 0) {
-                callback('user has existed', null);
-                return;
-            }
-        }
         var user = {
             id: id,
             userName : userName,
@@ -77,8 +66,6 @@ exports.addUser = function (id, userName, password, date, callback) {
             user,
             callback
         );
-
-    });
 }
 
 /**
@@ -427,46 +414,52 @@ exports.addFavor = function (user, talk, callback) {
   */
 function tokenByUser(user, callback) {
     client.query(
-        'select * from token where user = ?',
+        'select * from token where user=?',
         user,
         callback
     ); 
 }
-
 exports.tokenByUser = tokenByUser;
+
+/**
+ * 根据token和userId查询用户
+ */
+function getUserByIdAndToken(userId, token, callback) {
+    client.query(
+        'select * from token where user=? and token=?',
+        [userId, token],
+        callback
+    );
+}
+exports.getUserByIdAndToken = getUserByIdAndToken;
 
 /**
  * 插入用户token
  */
 exports.addToken = function (user, token, callback) {
-    tokenByUser(user, function (err, result) {
-        if (err) {
-            callback(err, null);
-        } else {
-            if (result.length > 1) {
-                callback('系统错误，同一用户多次登录!', null);
-            } else if (1 == result.length){
-                var tokenValue = {
-                    token : token
-                };
-                client.query(
-                    "update token set ? where user = ?",
-                    [tokenValue, user],
-                    callback
-                );
-            } else if (0 == result.length) {
-                var tokenValue = {
-                    user : user,
-                    token : token
-                };
-                client.query(
-                    'insert into token set ?',
-                    tokenValue,
-                    callback
-                );
-            }
-        }
-    });
+    var tokenValue = {
+        user: user,
+        token: token
+    };
+    client.query(
+        'insert into token set ?',
+        tokenValue,
+        callback
+    );
+}
+
+/**
+ * 更新token表内容
+ */
+exports.updateUserToken = function (user, token, callback) {
+    var tokenValue = {
+        token : token
+    };
+    client.query(
+        "update token set ? where user = ?",
+        [tokenValue, user],
+        callback
+    );
 }
 
 /**
