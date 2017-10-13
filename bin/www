@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('mynode:server');
 var http = require('http');
+var config = require("../config");
 
 var io = require('socket.io');
 
@@ -14,7 +15,9 @@ var io = require('socket.io');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+// var port = normalizePort(process.env.PORT || '8011');
+var port = config.port;
+console.log("port:" + port);
 app.set('port', port);
 
 /**

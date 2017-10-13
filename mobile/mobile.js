@@ -3,13 +3,13 @@ var router = express.Router();
 var section = require("../models/section");
 var user = require("../models/user");
 var utils = require('../utils/utils');
-var multiparty = require('multiparty');
 var path = require('path');
-var fs = require("fs");
 let multer = require('multer');
+let media = require('../models/media');
+var config = require('../config'); 
 
 let uploadSingle = multer({
-    dest: 'public/media/images'
+    dest: 'tmp'
 });
 
 var rspHead = {
@@ -82,25 +82,21 @@ router.get('/getSections', function (req, res) {
 });
 
 /**
- * 图片上传
+ * 文件上传
  */
-router.post('/image_upload', uploadSingle.single('logo'), function (req, res, next) {
+router.post('/fileUpload', uploadSingle.single('file'), function (req, res, next) {
     var file = req.file;
-    console.log();
-    var fileInfo = {};
-
-    // 获取文件信息
-    fileInfo.mimetype = file.mimetype;
-    fileInfo.originalname = file.originalname;
-    fileInfo.size = file.size;
-    fileInfo.path = file.path;
-
-    // 设置响应类型及编码
-    res.set({
-        'content-type': 'application/json; charset=utf-8'
+    media.storageFile(file, function(err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            var url = "http://" + req.hostname + ":" + config.port + "/" + result;
+            rsp.body = {url: url};
+        }
+        res.send(rsp);
     });
-
-    res.send(JSON.stringify(fileInfo));
 });
 
 /**
