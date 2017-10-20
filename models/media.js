@@ -1,14 +1,14 @@
 var errorCode = require('../utils/error_code');
 var fs = require("fs");
 
-let mediaPath = "public/media/";
+var mediaPath = "public/media/";
 
 exports.storageFile = function(file, callback) {
-    let mimetype = file.mimetype.split("/");
-    let mime = mimetype[0];
+    var mimetype = file.mimetype.split("/");
+    var mime = mimetype[0];
 
-    let path = file.path;
-    let fileName = file.originalname;
+    var path = file.path;
+    var fileName = file.originalname;
     if (mime == "image") {
         var des = mediaPath + "images/" + Date.now() + ".jpg";
         fs.rename(file.path, des, function (err) {

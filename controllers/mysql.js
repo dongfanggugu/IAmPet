@@ -294,7 +294,7 @@ exports.talksWithUser = function (user, callback) {
 /**
  * 内容表内容插入
  */
-exports.addTalk = function(id, user, content, createTime, pictures, voice, video, section, callback) {
+exports.addTalk = function(id, user, content, pictures, voice, video, createTime, callback) {
     var talk = {
         id : id,
         user : user,
@@ -302,8 +302,7 @@ exports.addTalk = function(id, user, content, createTime, pictures, voice, video
         createTime : createTime,
         pictures : pictures,
         voice : voice,
-        video : video,
-        section : section
+        video : video
     };
 
     client.query(

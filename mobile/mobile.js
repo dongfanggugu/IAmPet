@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 var section = require("../models/section");
 var user = require("../models/user");
+var talk = require('../models/talk');
 var utils = require('../utils/utils');
 var path = require('path');
-let multer = require('multer');
-let media = require('../models/media');
+var multer = require('multer');
+var media = require('../models/media');
 var config = require('../config'); 
 
-let uploadSingle = multer({
+var uploadSingle = multer({
     dest: 'tmp'
 });
 
@@ -70,17 +71,6 @@ router.post('/logout', function (req, res) {
     }); 
 });
 
-router.get('/getSections', function (req, res) {
-    section.sections(function(err, result) {
-        if (err) {
-            res.send(err);
-        } else {
-            res.send(result);
-        }
-    });
-
-});
-
 /**
  * 文件上传
  */
@@ -100,53 +90,21 @@ router.post('/fileUpload', uploadSingle.single('file'), function (req, res, next
 });
 
 /**
- * 添加版块
+ * 内容发布
  */
-router.get('/addSection', function(req, res) {
-    var name = '找妈妈';
-    var introduce = '我找不到家了，妈妈快点来找我'
-    section.addSection(name, introduce, function(err, result) {
+router.post('/publish', function(req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    talk.insert(userId, body.content, body.pictures, body.voice, body.video, function(err, result) {
+        var rsp = {};
         if (err) {
-            res.send(err);
+            rsp.head = err;
         } else {
-            res.send(result);
+            rsp.head = rspHead;
         }
+        res.send(rsp);
     });
-});
-
-router.get('/delSection', function(req, res) {
-    var id = 'f0995de0-96c6-11e7-a445-42a369257f0c';
-    section.delSection(id, function(err, result) {
-        if (err) {
-            res.send('delete 失败');
-        } else {
-            res.send('delete 成功');
-        }
-    });
-});
-
-router.post('/getSections', function (req, res) {
-    console.log(req.body);
-
-        var body = {
-            name:'ok',
-            id : 'sfssfsfsfsfs'
-        };
-        res.send(body);
-    // var post = '';
-
-    // req.on('data', function(data) {
-    //     post += data;
-    // });
-
-    // req.on('end', function() {
-    //     console.log(data);
-    //     var body = {
-    //         name:'ok',
-    //         id : 'sfssfsfsfsfs'
-    //     };
-    //     req.send(body);
-    // });
 });
 
 module.exports = router;
