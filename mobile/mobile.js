@@ -90,7 +90,7 @@ router.post('/fileUpload', uploadSingle.single('file'), function (req, res, next
 });
 
 /**
- * 内容发布
+ * 说说发布
  */
 router.post('/publish', function(req, res) {
     var head = req.body.head;
@@ -106,5 +106,28 @@ router.post('/publish', function(req, res) {
         res.send(rsp);
     });
 });
+
+/**
+ * 根据userId获取说说
+ */
+router.post('/talksWithUserId', function(req, res) {
+    console.log(req.body);
+    var head = req.body.head;
+    var userId = head.userId;
+    talk.query(userId, function(err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = utils.delJsonNull(result);
+        }
+        res.send(rsp);
+    });
+});
+
+
+
+
 
 module.exports = router;

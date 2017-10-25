@@ -285,7 +285,7 @@ exports.modifyCategoryName = function(id, name, content, callback) {
 
 exports.talksWithUser = function (user, callback) {
     client.query(
-        'select * from talk where user = ?',
+        'select * from talk where user = ? order by createTime desc',
         user,
         callback
     );

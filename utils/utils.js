@@ -44,8 +44,27 @@ exports.nowDate = function() {
     if (strDate >= 0 && strDate <= 9) {
         strDate = "0" + strDate;
     }
+
+
+    var strHour = date.getHours();
+    if (strHour >= 1 && strHour <= 9) {
+        strHour = "0" + strHour;
+    }
+
+    var strMin = date.getMinutes();
+    var strMin = date.getMinutes();
+    var strMin = date.getMinutes();
+    var strMin = date.getMinutes();
+    if (strMin >= 1 && strMin <= 9) {
+        strMin = "0" + strMin;
+    }
+
+    var strSecond = date.getSeconds();
+    if (strSecond >= 1 && strSecond <= 9) {
+        strSecond = "0" + strSecond;
+    }
+
     var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-        + " " + date.getHours() + seperator2 + date.getMinutes()
-        + seperator2 + date.getSeconds();
+        + " " + strHour + seperator2 + strMin + seperator2 + strSecond;
     return currentdate;
 }
