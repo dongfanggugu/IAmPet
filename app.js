@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var mobile = require('./mobile/mobile');
+var utils = require('./utils/utils');
 var app = express();
 
 //socket

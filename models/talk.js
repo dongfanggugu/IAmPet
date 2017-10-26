@@ -21,8 +21,8 @@ exports.insert = function (userId, content, pictures, voice, video, callback) {
 /**
  * query the talks with the userId 
  */
-exports.query = function(userId, callback) {
-    mysql.talksWithUser(userId, function (err, result) {
+exports.query = function(userId, createTime, pageSize, callback) {
+    mysql.talksWithUser(userId, createTime, pageSize, function (err, result) {
         if (err) {
             ErrorCode.error0002.msg = err;
             callback(ErrorCode.error0002, null);

@@ -3,13 +3,25 @@ var mysql = require('mysql');
 var DATABASE = 'z_pet_talk';
 
 var client;
+
+function handleError(err) {
+    if (err) {
+        if (err.code == 'PROTOCOL_CONNECTION_LOST') {
+            connetcion();
+        } else {
+            console.error(err.stack || err);
+        }
+    }
+}
+
 function connetcion() {
     client = mysql.createConnection({
         host : 'www.chorstar.com',
         user: 'root',
         password: 'pingan365CXHZ',
     });
-    client.connect();
+    client.connect(handleError);
+    client.on('error', handleError);
     client.query('use ' + DATABASE);
 };
 
@@ -283,12 +295,20 @@ exports.modifyCategoryName = function(id, name, content, callback) {
  * 内容表查询，根据用户
  */
 
-exports.talksWithUser = function (user, callback) {
-    client.query(
-        'select * from talk where user = ? order by createTime desc',
-        user,
-        callback
-    );
+exports.talksWithUser = function (user, createTime, pageSize, callback) {
+    if (null == createTime || "" == createTime || createTime == undefined) {
+        client.query(
+            'select * from talk where user = ? order by createTime desc limit 0, ?',
+            [user, pageSize],
+            callback
+        );
+    } else {
+        client.query(
+            'select * from talk where user = ? and createTime < ? order by createTime desc limit 0, ?',
+            [user, createTime, pageSize],
+            callback
+        );
+    }
 }
 
 /**

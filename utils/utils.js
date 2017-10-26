@@ -34,6 +34,22 @@ exports.md5 = function(source) {
  */
 exports.nowDate = function() {
     var date = new Date();
+    return date.getTime();
+}
+
+/**
+ * get date's milionseconds
+ */
+exports.getMilionSeconds = function(date) {
+    var date = new Date(date);
+    return date.getTime();
+}
+
+/**
+ * get current date
+ */
+exports.formatNow = function() {
+    var date = new Date();
     var seperator1 = "-";
     var seperator2 = ":";
     var month = date.getMonth() + 1;
@@ -44,7 +60,6 @@ exports.nowDate = function() {
     if (strDate >= 0 && strDate <= 9) {
         strDate = "0" + strDate;
     }
-
 
     var strHour = date.getHours();
     if (strHour >= 1 && strHour <= 9) {

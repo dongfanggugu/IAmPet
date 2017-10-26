@@ -113,8 +113,16 @@ router.post('/publish', function(req, res) {
 router.post('/talksWithUserId', function(req, res) {
     console.log(req.body);
     var head = req.body.head;
+    var body = req.body.body;
     var userId = head.userId;
-    talk.query(userId, function(err, result) {
+    var createTime = "";
+    if (body != undefined)
+    {
+        createTime = body.createTime;
+    }
+
+    var pageSize = 10;
+    talk.query(userId, createTime, pageSize, function(err, result) {
         var rsp = {};
         if (err) {
             rsp.head = err;
