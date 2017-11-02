@@ -420,7 +420,7 @@ exports.favors = function (user, callback) {
 
 exports.favorExist = function(user, talk, callback) {
     client.query(
-        'select from favor where user = ? and talk = ?',
+        'select * from favor where user = ? and talk = ?',
         [user, talk],
         callback
     );
@@ -466,7 +466,7 @@ exports.delFavor = function (user, talk, callback) {
  */
 exports.favorCount = function (talk, callback) {
     client.query(
-        'select count(*) from favor where talk = ?',
+        'select count(*) as favorCount from favor where talk = ?',
         talk,
         function(err, result) {
             if (err) {
