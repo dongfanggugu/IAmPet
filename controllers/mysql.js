@@ -291,6 +291,26 @@ exports.modifyCategoryName = function(id, name, content, callback) {
  ********************************
  */
 
+ /**
+ * 内容表查询，所有
+ */
+
+exports.talksAll = function (createTime, pageSize, callback) {
+    if (null == createTime || "" == createTime || createTime == undefined) {
+        client.query(
+            'select * from talk order by createTime desc limit 0, ?',
+            pageSize,
+            callback
+        );
+    } else {
+        client.query(
+            'select * from talk where createTime < ? order by createTime desc limit 0, ?',
+            [createTime, pageSize],
+            callback
+        );
+    }
+}
+
 /**
  * 内容表查询，根据用户
  */
@@ -398,13 +418,23 @@ exports.favors = function (user, callback) {
     );
 }
 
+exports.favorExist = function(user, talk, callback) {
+    client.query(
+        'select from favor where user = ? and talk = ?',
+        [user, talk],
+        callback
+    );
+}
+
 /**
  * 用户添加收藏
  */
-exports.addFavor = function (user, talk, callback) {
+exports.addFavor = function (id, user, talk, createTime, callback) {
     var favor = {
+        id : id,
         user : user,
-        talk : talk
+        talk : talk,
+        createTime : createTime
     };
 
     client.query(
@@ -413,6 +443,33 @@ exports.addFavor = function (user, talk, callback) {
         function (err, result) {
             if (err) {
                 throw err;
+                callback(err, null);
+            } else {
+                callback(null, result);
+            }
+        }
+    );
+}
+
+/**
+ * 用户删除收藏
+ */
+exports.delFavor = function (user, talk, callback) {
+    client.query(
+        'delete from favor where user = ? and talk = ?',
+        [user, talk],
+    );
+}
+
+/**
+ * get favor count of a talk
+ */
+exports.favorCount = function (talk, callback) {
+    client.query(
+        'select count(*) from favor where talk = ?',
+        talk,
+        function(err, result) {
+            if (err) {
                 callback(err, null);
             } else {
                 callback(null, result);

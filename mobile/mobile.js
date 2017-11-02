@@ -111,7 +111,6 @@ router.post('/publish', function(req, res) {
  * 根据userId获取说说
  */
 router.post('/talksWithUserId', function(req, res) {
-    console.log(req.body);
     var head = req.body.head;
     var body = req.body.body;
     var userId = head.userId;
@@ -134,6 +133,67 @@ router.post('/talksWithUserId', function(req, res) {
     });
 });
 
+/**
+ * get all talks
+ */
+router.post('/getTalks', function(req, res) {
+    var body = req.body.body;
+    var createTime = "";
+    if (body != undefined)
+    {
+        createTime = body.createTime;
+    }
+
+    var pageSize = 10;
+    talk.queryAll(createTime, pageSize, function(err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = utils.delJsonNull(result);
+        }
+        res.send(rsp);
+    });
+});
+
+/**
+ * add favor
+ */
+router.post('/favor', function(req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    var talkId = body.talkId;
+    talk.addFavor(userId, talkId, function (err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = result;
+        }
+        res.send(rsp);
+    });
+});
+
+/**
+ * get favor count of talk
+ */
+router.post('/favorCount', function (req, res) {
+    var body = req.body.body;
+    var talkId = body.talkId;
+    talk.favorCount(talkId, function (err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = result;
+        }
+        res.send(rsp);
+    });
+});
 
 
 

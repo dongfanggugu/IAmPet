@@ -44,3 +44,7 @@ exports.error0010 = {
     msg : "系统错误:查询用户表失败"
 }
 
+exports.error0011 = {
+    code : 11,
+    msg : "系统错误:您已经收藏过该说说"
+}

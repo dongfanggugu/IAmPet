@@ -19,6 +19,20 @@ exports.insert = function (userId, content, pictures, voice, video, callback) {
 }
 
 /**
+ * query all the talks
+ */
+exports.queryAll = function(creatTime, pageSize, callback) {
+    mysql.talksAll(createTime, pageSize, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};
+
+/**
  * query the talks with the userId 
  */
 exports.query = function(userId, createTime, pageSize, callback) {
@@ -31,3 +45,45 @@ exports.query = function(userId, createTime, pageSize, callback) {
         }
     });
 };
+
+/**
+ * favor the talk
+ */
+exports.addFavor = function (userId, talk, callback) {
+    mysql.favorExist(userId, talk, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            //already exist
+            if (result.length > 0) {
+                callback(ErrorCode.error0011, null);
+            } else {
+                var uuid = utils.uuid();
+                var createTime = utils.nowDate();
+                mysql.addFavor(uuid, userId, talk, createTime, function (err, result) {
+                    if (err) {
+                        ErrorCode.error0002.msg = err;
+                        callback(ErrorCode.error0002, null);
+                    } else {
+                        callback(null, result);
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * favor count of the talk
+ */
+exports.favorCount = function (talk, callback) {
+    mysql.favorCount(talk, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            callback(null, result);
+        }
+    });
+}
