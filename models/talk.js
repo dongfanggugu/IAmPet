@@ -66,24 +66,27 @@ exports.addFavor = function (userId, talk, callback) {
                         ErrorCode.error0002.msg = err;
                         callback(ErrorCode.error0002, null);
                     } else {
-                        callback(null, result);
+                        //获取当前数量
+                        mysql.favorCount(talk, function (err, result) {
+                            if (err) {
+                                ErrorCode.error0002.msg = err;
+                                callback(ErrorCode.error0002, null);
+                            } else {
+                                var count = result[0].favorCount;
+                                //更新收藏数量
+                                mysql.favorTalk(talk, count, function (err, result) {
+                                    if (err) {
+                                        ErrorCode.error0002.msg = err;
+                                        callback(ErrorCode.error0002, null);
+                                    } else {
+                                        callback(null, result);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
-        }
-    });
-}
-
-/**
- * favor count of the talk
- */
-exports.favorCount = function (talk, callback) {
-    mysql.favorCount(talk, function (err, result) {
-        if (err) {
-            ErrorCode.error0002.msg = err;
-            callback(ErrorCode.error0002, null);
-        } else {
-            callback(null, result);
         }
     });
 }

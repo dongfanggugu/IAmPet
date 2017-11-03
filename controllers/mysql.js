@@ -353,6 +353,17 @@ exports.addTalk = function(id, user, content, pictures, voice, video, createTime
 }
 
 /**
+ * 更新收藏数量
+ */
+exports.favorTalk = function (talk, count, callback) {
+    client.query(
+        'update talk set favorCount = ? where id = ?',
+        [count, talk],
+        callback
+    );
+}
+
+/**
  * 喜欢内容
  */
 exports.likeTalk = function (talk, callback) {
