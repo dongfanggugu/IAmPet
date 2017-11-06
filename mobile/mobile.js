@@ -137,7 +137,9 @@ router.post('/talksWithUserId', function(req, res) {
  * get all talks
  */
 router.post('/getTalks', function(req, res) {
+    var head = req.body.head;
     var body = req.body.body;
+    var userId = head.userId;
     var createTime = "";
     if (body != undefined)
     {
@@ -145,7 +147,7 @@ router.post('/getTalks', function(req, res) {
     }
 
     var pageSize = 10;
-    talk.queryAll(createTime, pageSize, function(err, result) {
+    talk.queryAll(userId, createTime, pageSize, function(err, result) {
         var rsp = {};
         if (err) {
             rsp.head = err;
@@ -195,7 +197,26 @@ router.post('/favorCount', function (req, res) {
     });
 });
 
+/**
+ * add comment to the talk
+ */
+router.post('/addComment', function (req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    var talkId = body.talkId;
+    var content = body.content;
 
+    talk.addComment(talkId, userId, content, function (err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+        }
+        res.send(rsp);
+    });
+});
 
 
 module.exports = router;

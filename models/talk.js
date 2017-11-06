@@ -21,13 +21,29 @@ exports.insert = function (userId, content, pictures, voice, video, callback) {
 /**
  * query all the talks
  */
-exports.queryAll = function(createTime, pageSize, callback) {
+exports.queryAll = function(userId, createTime, pageSize, callback) {
     mysql.talksAll(createTime, pageSize, function (err, result) {
         if (err) {
             ErrorCode.error0002.msg = err;
             callback(ErrorCode.error0002, null);
         } else {
-            callback(null, result);
+            mysql.favors(userId, function (err, favors) {
+                if (err) {
+                    ErrorCode.error0002.msg = err;
+                    callback(ErrorCode.error0002, null);
+                } else {
+                    for (var i = 0; i < result.length; i++) {
+                        var exist = favors.some(function (x) {return x.talk == result[i].id});
+                        if (exist) {
+                            result[i].favor = true;
+                        }
+                        else {
+                            result[i].favor = false;
+                        }
+                    }
+                    callback(null, result);
+                }
+            });
         }
     });
 };
@@ -87,6 +103,37 @@ exports.addFavor = function (userId, talk, callback) {
                     }
                 });
             }
+        }
+    });
+}
+
+/**
+ * add talk comment
+ */
+exports.addComment = function (talkId, userId, content, callback) {
+    var uuid = utils.uuid();
+    var createTime = utils.nowDate();
+    mysql.addComment(uuid, talkId, userId, content, createTime, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            mysql.commentCount(talkId, function (err, result) {
+                if (err) {
+                    ErrorCode.error0002.msg = err;
+                    callback(ErrorCode.error0002, null);
+                } else {
+                    var count = result[0].commentCount;
+                    mysql.commentTalk(talkId, count, function (err, result) {
+                        if (err) {
+                            ErrorCode.error0002.msg = err;
+                            callback(ErrorCode.error0002, null);
+                        } else {
+                            callback(null, result);
+                        }
+                    });
+                }
+            });
         }
     });
 }

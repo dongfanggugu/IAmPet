@@ -364,6 +364,17 @@ exports.favorTalk = function (talk, count, callback) {
 }
 
 /**
+ * 更新评论数量
+ */
+exports.commentTalk = function (talk, count, callback) {
+    client.query(
+        'update talk set commentCount = ? where id = ?',
+        [count, talk],
+        callback
+    );
+};
+
+/**
  * 喜欢内容
  */
 exports.likeTalk = function (talk, callback) {
@@ -383,9 +394,28 @@ exports.likeTalk = function (talk, callback) {
 /**
  * 查询说说的评论按时间排序
  */
-exports.comments = function (talk, callback) {
+exports.comments = function (talk, createTime, pageSize, callback) {
+    if (null == createTime || "" == createTime || undefined == createTime) {
+        client.query(
+            'select * from comment where talk = ? order by createTime desc limit 0, ?',
+            [talk, pageSize],
+            callback
+        );
+    } else {
+        client.query(
+            'select * from comment where talk = ? and createTime < ? order by createTime desc limit 0, ?',
+            [talk, createTime, pageSize],
+            callback
+        );
+    }
+}
+
+/**
+ * get talk comment count
+ */
+exports.commentCount = function (talk, callback) {
     client.query(
-        'select * from comment where talk = ? order by createTime desc',
+        'select count(*) as commentCount from comment where talk = ?',
         talk,
         callback
     );
@@ -394,14 +424,13 @@ exports.comments = function (talk, callback) {
  /**
   * 对某条说说添加评论
   */
-exports.addComment = function (id, talk, user, content, createTime, voice, callback) {
+exports.addComment = function (id, talk, user, content, createTime, callback) {
     var comment = {
         id : id,
         talk : talk,
         user : user,
         content : content,
-        createTime : createTime,
-        voice : voice
+        createTime : createTime
     };
 
     client.query(
