@@ -375,6 +375,17 @@ exports.commentTalk = function (talk, count, callback) {
 };
 
 /**
+ * 更新喜欢数量
+ */
+exports.likesTalk = function (talkId, count, callback) {
+    client.query(
+        'update talk set likesCount = ? where id = ?',
+        [count, talkId],
+        callback
+    );
+}
+
+/**
  * 喜欢内容
  */
 exports.likeTalk = function (talk, callback) {
@@ -394,16 +405,18 @@ exports.likeTalk = function (talk, callback) {
 /**
  * 查询说说的评论按时间排序
  */
-exports.comments = function (talk, createTime, pageSize, callback) {
+exports.talkComments = function (talk, createTime, pageSize, callback) {
     if (null == createTime || "" == createTime || undefined == createTime) {
         client.query(
-            'select * from comment where talk = ? order by createTime desc limit 0, ?',
+            'select comment.*, user.userName, user.icon from comment left join user on comment.user = user.id \
+            where talk = ? order by createTime desc limit 0, ?',
             [talk, pageSize],
             callback
         );
     } else {
         client.query(
-            'select * from comment where talk = ? and createTime < ? order by createTime desc limit 0, ?',
+            'select comment.*, user.userName, user.icon from comment left join user on comment.user = user.id \
+            where talk = ? and createTime < ? order by createTime desc limit 0, ?',
             [talk, createTime, pageSize],
             callback
         );
@@ -480,14 +493,7 @@ exports.addFavor = function (id, user, talk, createTime, callback) {
     client.query(
         'insert into favor set ?',
         favor,
-        function (err, result) {
-            if (err) {
-                throw err;
-                callback(err, null);
-            } else {
-                callback(null, result);
-            }
-        }
+        callback
     );
 }
 
@@ -498,6 +504,7 @@ exports.delFavor = function (user, talk, callback) {
     client.query(
         'delete from favor where user = ? and talk = ?',
         [user, talk],
+        callback
     );
 }
 
@@ -508,15 +515,58 @@ exports.favorCount = function (talk, callback) {
     client.query(
         'select count(*) as favorCount from favor where talk = ?',
         talk,
-        function(err, result) {
-            if (err) {
-                callback(err, null);
-            } else {
-                callback(null, result);
-            }
-        }
+        callback
     );
 }
+
+/*********************************
+ *********************************
+ * likes表操作 likes 
+ ********************************
+ ******************************** 
+ */
+
+ /**
+  * 用户添加喜欢
+  */
+exports.addLikes = function (id, userId, talkId, createTime, callback) {
+    var likes = {
+        id: id,
+        userId: userId,
+        talkId: talkId,
+        createTime: createTime
+    };
+
+    client.query(
+        'insert into likes set ?',
+        likes,
+        callback
+    );
+}
+
+/**
+ * 查询用户是否已经喜欢
+ */
+exports.existLikes = function (userId, talkId, callback) {
+    client.query(
+        'select * from likes where userId = ? and talkId = ?',
+        [userId, talkId],
+        callback
+    );
+}
+
+/**
+ * 获取说说喜欢的数量
+ */
+exports.likesCount = function (talkId, callback) {
+    client.query(
+        'select count(*) as likesCount from likes where talkId = ?',
+        talkId,
+        callback
+    );
+}
+
+
 
 /*********************************
  *********************************

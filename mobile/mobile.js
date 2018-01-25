@@ -218,5 +218,48 @@ router.post('/addComment', function (req, res) {
     });
 });
 
+/**
+ * add likes to the talk
+ */
+router.post('/addLikes', function (req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    var talkId = body.talkId;
+
+    talk.addLikes(userId,talkId, function (err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+        }
+        res.send(rsp);
+    });
+});
+
+/**
+ * get talk's comments
+ */
+router.post('/talkComments', function (req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    var talkId = body.talkId;
+    var createTime = body.createTime;
+    var pageSize = 10;
+
+    talk.talkComments(talkId, createTime, pageSize, function (err, result) {
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = result;
+        }
+        res.send(rsp);
+    });
+});
+
 
 module.exports = router;

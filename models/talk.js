@@ -1,3 +1,5 @@
+//import { createConnection } from "mysql";
+
 var mysql = require("../controllers/mysql");
 var utils = require('../utils/utils');
 var ErrorCode = require('../utils/error_code');
@@ -137,3 +139,63 @@ exports.addComment = function (talkId, userId, content, callback) {
         }
     });
 }
+
+/**
+ * add talk likes
+ */
+exports.addLikes = function (userId, talkId, callback) {
+    //if exist
+    mysql.existLikes(userId, talkId, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            if (result.length > 0) {
+                callback(ErrorCode.error0012, null);
+            } else {
+                var uuid = utils.uuid();
+                var createTime = utils.nowDate();
+                //insert to the likes table
+                mysql.addLikes(uuid, userId, talkId, createTime, function (err, result) {
+                    if (err) {
+                        ErrorCode.error0002.msg = err;
+                        callback(ErrorCode.error0002, null);
+                    } else {
+                        //get the likes count of the talk
+                        mysql.likesCount(talkId, function (err, result) {
+                            if (err) {
+                                ErrorCode.error0002.msg = err;
+                                callback(ErrorCode.error0002, null);
+                            } else {
+                                var count = result[0].likesCount;
+                                //update the likes count in the talk table
+                                mysql.likesTalk(talkId, count, function (err, result) {
+                                    if (err) {
+                                        ErrorCode.error0002.msg = err;
+                                        callback(ErrorCode.error0002, null);
+                                    } else {
+                                        callback(null, result);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * get talk's comments
+ */
+exports.talkComments = function (talkId, createTime, pageSize, callback) {
+    mysql.talkComments(talkId, createTime, pageSize, function (err, result) {
+        if (err) {
+            ErrorCode.error0002.msg = err;
+            callback(ErrorCode.error0002, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};

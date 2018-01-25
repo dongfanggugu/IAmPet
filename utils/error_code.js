@@ -48,3 +48,8 @@ exports.error0011 = {
     code : 11,
     msg : "系统错误:您已经收藏过该说说"
 }
+
+exports.error0012 = {
+    code : 12,
+    msg : "系统错误:您已经点赞过该说说"
+}
