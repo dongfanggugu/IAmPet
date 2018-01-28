@@ -261,5 +261,23 @@ router.post('/talkComments', function (req, res) {
     });
 });
 
+router.post('/modifyUser', function (req, res) {
+    var head = req.body.head;
+    var body = req.body.body;
+    var userId = head.userId;
+    var type = body.type;
+    var value = body.value;
+    user.modifyUser(userId, type, value, function (err, result) { 
+        var rsp = {};
+        if (err) {
+            rsp.head = err;
+        } else {
+            rsp.head = rspHead;
+            rsp.body = result;
+        }
+        res.send(rsp);
+    });
+});
+
 
 module.exports = router;

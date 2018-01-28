@@ -53,3 +53,8 @@ exports.error0012 = {
     code : 12,
     msg : "系统错误:您已经点赞过该说说"
 }
+
+exports.error0013 = {
+    code : 13,
+    msg : "系统错误:修改用户信息失败"
+}

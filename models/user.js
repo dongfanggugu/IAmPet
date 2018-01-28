@@ -113,3 +113,21 @@ exports.logout = function (user, token, callback) {
         }
     })
 }
+
+/**
+ * 修改用户信息
+ * @param {*} user 
+ * @param {*} type 
+ * @param {*} value 
+ * @param {*} callback 
+ */
+exports.modifyUser = function (user, type, value, callback) {
+    mysql.modiftyUserColumn(user, type, value, function(err, result) {
+        if (err) {
+            errorCode.error0002.msg = err;
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
+    });
+}

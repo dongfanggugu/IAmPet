@@ -68,7 +68,7 @@ exports.queryUsersById = queryUsersById;
  */
 exports.addUser = function (id, userName, password, date, callback) {
         var user = {
-            id: id,
+            id : id,
             userName : userName,
             password : password,
             createTime : date
@@ -78,6 +78,17 @@ exports.addUser = function (id, userName, password, date, callback) {
             user,
             callback
         );
+}
+
+exports.modiftyUserColumn = function (id, type, value, callback) {
+    var user = {};
+    user[type] = value;
+
+    client.query(
+        'update user set ? where id = ?',
+        [user, id],
+        callback
+    );
 }
 
 /**
